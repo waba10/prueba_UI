@@ -2,45 +2,46 @@ package com.ayala.uii
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ayala.uii.Adapter.BookAdapter
-import com.ayala.uii.models.Book
-import kotlinx.android.synthetic.main.activity_main.*
-import org.json.JSONObject
+import com.ayala.uii.ViewModel.BookViewModel
+
+import androidx.lifecycle.Observer
+import com.ayala.uii.Entity.Book
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private lateinit var moneda: MutableList<Book>
+    private lateinit var libros: MutableList<Book>
+
+    private val newBookActivityRequestCode = 1
+    private lateinit var bookViewModel: BookViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
 
-        moneda = MutableList(10) { i ->
-            Log.d("prueba", i.toString())
+        val recyclerView = findViewById<RecyclerView>(R.id.rv_book_list)
+        val adapter = BookAdapter(this)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
 
-            Book(1, "titulo", 1, "editorial", 1, "resumen")
+        val viewModel = ViewModelProviders.of(this).get(BookViewModel::class.java)
 
-        }
-        initRecycler()
-    }
+        viewModel.getAll().observe(this, Observer { books ->
+            books?.let { adapter.setBooks(it) }
+        })
 
-    fun initRecycler() {
-        viewManager = LinearLayoutManager(this)
-        viewAdapter = BookAdapter(moneda)
-
-        rv_book_list.apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = viewAdapter
-        }
+        viewModel.getAll().observe(this, Observer { books ->
+            for (books in books) {
+                //Log.d("Lista de libros", books.titleEnglish + books.titleSpanish + books.editorial)
+            }
+        })
 
     }
 }

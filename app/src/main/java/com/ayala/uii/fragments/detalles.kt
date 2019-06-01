@@ -13,14 +13,12 @@ import com.ayala.uii.R
 
 class detalles : Fragment() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view= inflater.inflate(R.layout.fragment_detalles, container, false).apply {
-            findViewById<TextView>(R.id.tv_fragment_name).text = arguments?.getString("key_nombre")
-            findViewById<TextView>(R.id.tv_fragment_id).text = arguments?.getString("key_ambito")
+            findViewById<TextView>(R.id.tv_fragment_resumen).text = arguments?.getString("key_resumen")
+            findViewById<TextView>(R.id.tv_fragment_titulo).text = arguments?.getString("key_titulo")
         }
 
         return view

@@ -1,59 +1,57 @@
 package com.ayala.uii.Adapter
 
+import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.ayala.uii.Entity.Book
 import com.ayala.uii.R
 import com.ayala.uii.SecondActivity
-import com.ayala.uii.models.Book
+import kotlinx.android.synthetic.main.list_element_book.view.*
 
-class BookAdapter(val items: List<Book>): RecyclerView.Adapter<BookAdapter.ViewHolder>
+
+class BookAdapter internal constructor(context: Context) :  RecyclerView.Adapter<BookAdapter.BookViewHolder>
     () {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookAdapter.ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_element_book, parent, false)
 
+    private var books = emptyList<Book>() // Cached copy of words
 
-        return ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookAdapter.BookViewHolder {
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.list_element_book, parent, false)
+        return BookViewHolder(itemView)
     }
 
-    override fun getItemCount(): Int {
-        return items.size
+    override fun getItemCount() = books.size
+
+    override fun onBindViewHolder(holder: BookAdapter.BookViewHolder, position: Int) {
+        holder.bind(books[position])
     }
 
-    override fun onBindViewHolder(holder: BookAdapter.ViewHolder, position: Int) = holder.bind(items[position])
+    internal fun setBooks(words: List<Book>) {
+        this.books = words
+        notifyDataSetChanged()
+    }
 
-    class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
-        lateinit var tvTitulo: TextView
-        lateinit var tvEdicion: TextView
-        lateinit var tvEditorial: TextView
-        lateinit var tvISBN: TextView
-        lateinit var tvResumen: TextView
+    class BookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(book: Book) {
+            with(itemView) {
+                titulo.text=book.titulo
+                edicion.text=book.edicion
+                editorial.text=book.editorial
+                isbn.text=book.isbn
+                resumen.text=book.resumen
 
-        fun bind(libro: Book) = with(itemView){
-            Log.d("CUSTOM",libro.titulo)
-            tvTitulo =  findViewById(R.id.titulo)
-            tvTitulo.text = libro.titulo
-            tvEdicion =  findViewById(R.id.edicion)
-            tvEdicion.text = libro.edicion.toString()
-            tvEditorial =  findViewById(R.id.editorial)
-            tvEditorial.text = libro.editorial
-            tvISBN =  findViewById(R.id.isbn)
-            tvISBN.text = libro.isbn.toString()
-            tvResumen =  findViewById(R.id.resumen)
-            tvResumen.text = libro.resumen
 
-            this.setOnClickListener {
-                var mIntent = Intent(it.context,  SecondActivity:: class.java)
-                mIntent.putExtra("key_nombre", libro.resumen)
-                mIntent.putExtra("key_ambito", libro.titulo)
-                this.context.startActivity(mIntent)
+                this.setOnClickListener {
+                    var mIntent = Intent(it.context,  SecondActivity:: class.java)
+                    mIntent.putExtra("key_resumen", book.resumen)
+                    mIntent.putExtra("key_titulo", book.titulo)
+                    this.context.startActivity(mIntent)
+                }
+
             }
+
         }
     }
-
 }
